@@ -30,16 +30,16 @@ state error, returning, paused
 
 //USER CONFIGURED SECTION START//
 #define MAX_BUFFER 8192
-const char *ssid = "XXX";
-const char *password = "YYY";
-#define MQTT_SERVER "1.2.3.4"
+const char *ssid = "Odin";
+const char *password = "P286UV26qi883p";
+#define MQTT_SERVER "192.168.7.141"
 #define MQTT_PORT 1883
-#define MQTT_CLIENT_ID "ESP8266_Neato"
-#define MQTT_USER "mqtthoover"
-#define MQTT_PASSWORD "ZZZ"
-#define MQTT_TOPIC_SUBSCRIBE "neato/command" //receive
-#define MQTT_TOPIC_RAWCOMMANDS "neato/send_command" // receive raw commands
-#define MQTT_WILL_TOPIC "neato/will"        //publish
+#define MQTT_CLIENT_ID "VR100_WZ"
+#define MQTT_USER "MQTT-user"
+#define MQTT_PASSWORD "p2d9wu4M"
+#define MQTT_TOPIC_SUBSCRIBE "VR100_WZ/command" //receive
+#define MQTT_TOPIC_RAWCOMMANDS "VR100_WZ/send_command" // receive raw commands
+#define MQTT_WILL_TOPIC "VR100_WZ/will"        //publish
 //USER CONFIGURED SECTION END//
 
 // Timer
@@ -104,7 +104,7 @@ void mqttReconnect()
       mqttClient.subscribe(MQTT_TOPIC_SUBSCRIBE);
       mqttClient.subscribe(MQTT_TOPIC_RAWCOMMANDS);
       mqttClient.publish(MQTT_WILL_TOPIC, "2", true);
-      mqttClient.publish("neato/available", "online");
+      mqttClient.publish("VR100_WZ/available", "online");
     }
     else
     {
@@ -121,9 +121,13 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
   payload[length] = '\0';
   String newPayload = String((char *)payload);
 
-  if (newTopic == "neato/command")
+  if (newTopic == "VR100_WZ/command")
   {
-    if (newPayload == "start_pause" || newPayload == "turn_on")
+    if (newPayload == "start" || newPayload == "turn_on")
+    {
+      Serial.printf("%s\n", "Clean House");
+    }
+    if (newPayload == "pause" || newPayload == "turn_on")
     {
       Serial.printf("%s\n", "Clean House");
     }
@@ -139,10 +143,10 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
     {
       Serial.printf("%s\n", "PlaySound 3");
     }
-    sendInfoNeato((char *)"neato/state");
+    sendInfoNeato((char *)"VR100_WZ/state");
   }
   // Send a custom command, like SetTime. No feedbock.
-  else if (newTopic == "neato/send_command")
+  else if (newTopic == "VR100_WZ/send_command")
   {
     static byte ndx = 0;
     char endMarker = '\n';
@@ -175,7 +179,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
       else
       {
         receivedChars[ndx] = '\0'; // terminate the string
-        mqttClient.publish("neato/debug", (char *)receivedChars);
+        mqttClient.publish("VR100_WZ/debug", (char *)receivedChars);
         ndx = 0;
       }
     }
@@ -323,7 +327,7 @@ void sendInfoNeato(char *topic)
 
   String jsonStr;
   serializeJsonPretty(root, jsonStr);
-  mqttClient.publish("neato/state", jsonStr.c_str());
+  mqttClient.publish("VR100_WZ/state", jsonStr.c_str());
 
   //reset the buffer
   receivedChars[0] = ' ';
@@ -339,7 +343,7 @@ void setup()
   Serial.begin(115200);
   setup_wifi();
 
-  ArduinoOTA.setHostname("neato");
+  ArduinoOTA.setHostname("VR100_WZ");
   // ArduinoOTA.setPassword("neato");
   ArduinoOTA.begin();
 
@@ -363,9 +367,9 @@ void setup()
   ArduinoOTA.begin();
   httpUpdater.setup(&updateServer);
   updateServer.begin();
-  // start webserver
-  // server.on("/console", serverEvent);
-  // server.on("/", HTTP_POST, saveEvent);
+  //start webserver
+  //server.on("/console", serverEvent);
+  //server.on("/", HTTP_POST, saveEvent);
   server.on("/", HTTP_GET, setupEvent);
   server.on("/reboot", HTTP_GET, rebootEvent);
   server.onNotFound(setupEvent);
@@ -373,7 +377,7 @@ void setup()
 
   // start MDNS
   // this means that the botvac can be reached at http://neato.local
-  if (!MDNS.begin("neato"))
+  if (!MDNS.begin("VR100_WZ"))
   {
     ESP.reset(); //reset because there's no good reason for setting up MDNS to fail
   }
@@ -399,8 +403,8 @@ void loop()
     unsigned long currentMillis = millis();
     if (currentMillis - previousMillis > intervalcharging)
     {
-      mqttClient.publish("neato/available", "online");
-      sendInfoNeato((char *)"neato/state");
+      mqttClient.publish("WZ/available", "online");
+      sendInfoNeato((char *)"VR100_WZ/state");
       previousMillis = currentMillis;
     }
   }
@@ -409,8 +413,8 @@ void loop()
     unsigned long currentMillis = millis();
     if (currentMillis - previousMillis > interval)
     {
-      mqttClient.publish("neato/available", "online");
-      sendInfoNeato((char *)"neato/state");
+      mqttClient.publish("VR100_WZ/available", "online");
+      sendInfoNeato((char *)"VR100_WZ/state");
       previousMillis = currentMillis;
     }
   }
