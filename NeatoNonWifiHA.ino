@@ -30,9 +30,9 @@ state error, returning, paused
 
 //USER CONFIGURED SECTION START//
 #define MAX_BUFFER 8192
-const char *ssid = "Odin";
-const char *password = "P286UV26qi883p";
-#define MQTT_SERVER "192.168.7.141"
+const char *ssid = "XXX";
+const char *password = "XXX";
+#define MQTT_SERVER "192.168.7.123"
 #define MQTT_PORT 1883
 #define MQTT_CLIENT_ID "VR100_WZ"
 #define MQTT_USER "MQTT-user"
