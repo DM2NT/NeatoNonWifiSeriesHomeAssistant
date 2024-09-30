@@ -36,7 +36,7 @@ const char *password = "XXX";
 #define MQTT_PORT 1883
 #define MQTT_CLIENT_ID "VR100_WZ"
 #define MQTT_USER "MQTT-user"
-#define MQTT_PASSWORD "p2d9wu4M"
+#define MQTT_PASSWORD "PASS"
 #define MQTT_TOPIC_SUBSCRIBE "VR100_WZ/command" //receive
 #define MQTT_TOPIC_RAWCOMMANDS "VR100_WZ/send_command" // receive raw commands
 #define MQTT_WILL_TOPIC "VR100_WZ/will"        //publish
